@@ -42,16 +42,20 @@ func (p *Parse) Check(args []string) bool {
 	return true
 }
 
-func (p *Parse) Exec() bool {
+func (p *Parse) Exec() (bool, []string) {
 	fmt.Println("命令执行中", p.File, p.Ty, p.Name)
+	var (
+		result []string
+		flag   bool
+	)
 	switch p.Ty {
 	case json:
-		jsonParse(p.File, p.Name)
+		flag, result = jsonParse(p.File, p.Name)
 	default:
 		fmt.Println("type not support")
-		return false
+		flag = false
 	}
-	return true
+	return flag, result
 }
 
 func (p *Parse) Desc() {
@@ -63,8 +67,12 @@ func (p *Parse) Desc() {
 }
 
 // json类型文件解析提取字段
-func jsonParse(filePath string, name string) {
-	var cnt int
+func jsonParse(filePath string, name string) (bool, []string) {
+	var (
+		cnt    int
+		flag   bool
+		result []string
+	)
 	defer func() {
 		fmt.Println("总共提取", cnt, "条数据")
 	}()
@@ -72,7 +80,7 @@ func jsonParse(filePath string, name string) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		fmt.Println("无法打开文件: %v\n", err)
-		os.Exit(1)
+		return flag, result
 	}
 	defer file.Close()
 
@@ -85,21 +93,22 @@ func jsonParse(filePath string, name string) {
 		if err != nil {
 			// 如果到达文件末尾或遇到错误，则退出循环
 			if err.Error() == "EOF" {
-				break
+				flag = true
 			} else {
 				fmt.Fprintf(os.Stderr, "读取文件时出错: %v\n", err)
-				os.Exit(1)
 			}
+			break
 		}
 		names := strings.Split(name, ",")
 		var value = line
 		for _, n := range names {
 			value = gjson.Get(value, n).String()
 		}
-		if len(value) > 0 {
+		fmt.Println(value)
+		if value != "" {
+			result = append(result, value)
 			cnt++
 		}
-		fmt.Println(value)
-
 	}
+	return flag, result
 }
