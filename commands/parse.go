@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"bufio"
+	"command/utils"
 	"fmt"
 	"github.com/tidwall/gjson"
-	"os"
 	"strings"
 )
 
@@ -66,39 +65,13 @@ func (p *Parse) Desc() {
 	fmt.Println(desc)
 }
 
-// json类型文件解析提取字段
+// jsonParse json类型文件解析提取字段
 func jsonParse(filePath string, name string) (bool, []string) {
 	var (
-		cnt    int
 		flag   bool
 		result []string
 	)
-	defer func() {
-		fmt.Println("总共提取", cnt, "条数据")
-	}()
-	// 打开文件
-	file, err := os.Open(filePath)
-	if err != nil {
-		fmt.Println("无法打开文件: %v\n", err)
-		return flag, result
-	}
-	defer file.Close()
-
-	// 创建一个新的 Reader 对象
-	reader := bufio.NewReader(file)
-
-	for {
-		// 读取一行
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			// 如果到达文件末尾或遇到错误，则退出循环
-			if err.Error() == "EOF" {
-				flag = true
-			} else {
-				fmt.Fprintf(os.Stderr, "读取文件时出错: %v\n", err)
-			}
-			break
-		}
+	flag = utils.ReadFile(filePath, func(line string) bool {
 		names := strings.Split(name, ",")
 		var value = line
 		for _, n := range names {
@@ -107,8 +80,10 @@ func jsonParse(filePath string, name string) (bool, []string) {
 		fmt.Println(value)
 		if value != "" {
 			result = append(result, value)
-			cnt++
+			return true
 		}
-	}
+		return false
+	})
+
 	return flag, result
 }

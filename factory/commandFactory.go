@@ -9,11 +9,13 @@ import (
 )
 
 const (
-	Parse = "parse"
+	Parse    = "parse"
+	Distinct = "distinct"
 )
 
 var factory = map[string]define.Command{
-	Parse: &commands.Parse{},
+	Parse:    &commands.Parse{},
+	Distinct: &commands.Distinct{},
 }
 
 // ExecCommand 执行命令
