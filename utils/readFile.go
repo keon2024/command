@@ -29,14 +29,14 @@ func ReadFile(filePath string, f func(line string) bool) bool {
 	reader := bufio.NewReader(file)
 
 	for {
+		var line string
 		// 读取一行
-		line, err := reader.ReadString('\n')
+		line, err = reader.ReadString('\n')
 		if err != nil {
 			// 如果到达文件末尾或遇到错误，则退出循环
-			if err.Error() == "EOF" {
-				flag = true
-			} else {
-				fmt.Fprintf(os.Stderr, "读取文件时出错: %v\n", err)
+			if err.Error() != "EOF" {
+				fmt.Println("读取文件时出错: %v", err)
+				flag = false
 			}
 			break
 		}
@@ -44,6 +44,7 @@ func ReadFile(filePath string, f func(line string) bool) bool {
 			// 成功才计数
 			cnt++
 		}
+		flag = true
 
 	}
 	return flag
