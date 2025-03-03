@@ -11,6 +11,7 @@ import (
 const (
 	Parse    = "parse"
 	Distinct = "distinct"
+	Group    = "group"
 )
 
 var factory = map[string]define.Command{
