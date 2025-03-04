@@ -12,7 +12,6 @@ type Distinct struct {
 
 func (d *Distinct) Init(args []string) {
 	d.File = args[1]
-	return
 }
 
 func (d *Distinct) Check(args []string) bool {

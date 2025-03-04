@@ -17,6 +17,7 @@ const (
 var factory = map[string]define.Command{
 	Parse:    &commands.Parse{},
 	Distinct: &commands.Distinct{},
+	Group:    &commands.Group{},
 }
 
 // ExecCommand 执行命令

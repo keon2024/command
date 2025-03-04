@@ -23,7 +23,6 @@ func (p *Parse) Init(args []string) {
 	p.File = args[1]
 	p.Ty = args[2]
 	p.Name = args[3]
-	return
 }
 
 func (p *Parse) Check(args []string) bool {
