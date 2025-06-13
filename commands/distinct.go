@@ -58,7 +58,7 @@ func readFileDistinct(filePath string, num int) (
 	var (
 		flag   bool
 		result []string
-		dm     = make(map[string]int8)
+		dm     = make(map[string]int)
 	)
 	flag = utils.ReadFile(filePath, func(line string) bool {
 		value := strings.TrimSpace(line)
@@ -69,11 +69,16 @@ func readFileDistinct(filePath string, num int) (
 		if _, ok := dm[value]; !ok && value != "" {
 			dm[value] = 1
 			result = append(result, value)
-			fmt.Println(value)
+			//fmt.Println(value)
 			return true
+		} else {
+			dm[value]++
 		}
 		return false
 	})
+	for key, value := range dm {
+		fmt.Printf("key: %s, count: %d\n", key, value)
+	}
 
 	return flag, result
 }
